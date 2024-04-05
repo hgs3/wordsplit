@@ -1,0 +1,24 @@
+name: Build Status
+on: [push, pull_request]
+jobs:
+  linux:
+    name: "Linux CI"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    - name: CMake Build and Test
+      env:
+        CC: clang
+        CFLAGS: -m64
+      run: |
+        cmake -B build
+        cmake --build build
+        ctest --output-on-failure --test-dir build
+    - name: Memory Debugger
+      env:
+        CC: clang
+        CFLAGS: -m64
+      run: |
+        cd tests
+        ./wordsplit_analyze.sh
